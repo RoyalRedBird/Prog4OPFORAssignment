@@ -13,6 +13,7 @@ namespace NodeCanvas.Tasks.Actions {
         public BBParameter<float> flySpeed;
         public BBParameter<GameObject> destinationMarker;
         public BBParameter<bool> isAscending = false;
+        public LayerMask wallMask;
 
         private NavMeshAgent navAgent;
         private Rigidbody scarabRB;
@@ -37,21 +38,25 @@ namespace NodeCanvas.Tasks.Actions {
         protected override void OnUpdate() {
 
             Vector3 currentSpeed = agent.transform.position;
+            Vector3 scarabVelocity = agent.transform.forward * moveSpeed.value * Time.deltaTime;
+
+            //scarabRB.linearVelocity = agent.transform.forward * moveSpeed.value * Time.deltaTime;
+            Vector3 wallLineStartPos = agent.transform.position;
+            wallLineStartPos.y = agent.transform.position.y - 1.5f;
 
             RaycastHit forwardHit;
-            Debug.DrawLine(agent.transform.position, agent.transform.forward * 5 + agent.transform.position);
-            if (Physics.Raycast(agent.transform.position, agent.transform.forward, out forwardHit, 5f))
-            {
+            Debug.DrawLine(wallLineStartPos, agent.transform.forward * 5 + agent.transform.position);
+            if (Physics.Raycast(wallLineStartPos, agent.transform.forward, out forwardHit, 5f, wallMask))
+            {             
 
-                Debug.Log("There is something in front of me!");
-
-                if(forwardHit.rigidbody != null)
+                if(forwardHit.collider != null)
                 {
 
-                    scarabRB.linearVelocity = agent.transform.forward * moveSpeed.value;
+                    Debug.Log("There is something in front of me!");
                     //currentSpeed += agent.transform.forward + currentSpeed * Time.deltaTime;
                     //currentSpeed.y += flySpeed.value * Time.deltaTime;
-                    scarabRB.AddForce(new Vector3(0, flySpeed.value * Time.deltaTime), ForceMode.Force);
+                    //scarabRB.AddForce(new Vector3(0, flySpeed.value * Time.deltaTime), ForceMode.Acceleration);
+                    scarabVelocity.y = flySpeed.value * Time.deltaTime;
                     isAscending = true;
 
                 }
@@ -60,7 +65,6 @@ namespace NodeCanvas.Tasks.Actions {
             else
             {
 
-                scarabRB.linearVelocity = agent.transform.forward * moveSpeed.value;
                 //currentSpeed = agent.transform.forward + currentSpeed * Time.deltaTime;
                 isAscending = false;
 
@@ -73,15 +77,25 @@ namespace NodeCanvas.Tasks.Actions {
                 {
 
                     currentSpeed.y += -flySpeed.value * Time.deltaTime;
+                    scarabVelocity.y = -(flySpeed.value * Time.deltaTime);
 
                 }
             }
 
             //agent.transform.position = currentSpeed;
+            //Debug.Log("Scarab Velocity: " + scarabVelocity);
+            scarabRB.linearVelocity = scarabVelocity;
 
-            if(Vector3.Distance(agent.transform.position, destinationMarker.value.transform.position) < 1)
+            Vector3 scarabPosFlat = agent.transform.position;
+            scarabPosFlat.y = 0;
+
+            Vector3 destinationPosFlat = destinationMarker.value.transform.position;
+            destinationPosFlat.y = 0;
+
+            if(Vector3.Distance(scarabPosFlat, destinationPosFlat) < 1)
             {
 
+                scarabRB.linearVelocity = Vector3.zero;
                 EndAction(true);
 
             }

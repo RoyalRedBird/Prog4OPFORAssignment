@@ -28,9 +28,12 @@ namespace NodeCanvas.Tasks.Actions {
         //EndAction can be called from anywhere.
         protected override void OnExecute() {
 
-            if (NavMesh.SamplePosition(targetPosMarker.value.transform.position, out NavMeshHit hitInfo, 10, NavMesh.AllAreas))
+            Vector3 randomPoint = Vector3.zero + Random.insideUnitSphere * 125;
+
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hitInfo, 50, NavMesh.AllAreas))
             {
 
+                Debug.Log("Destionation Updated To: " + hitInfo.position);
                 targetPosMarker.value.transform.position = hitInfo.position;
 
             }
