@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NodeCanvas.Tasks.Actions {
 
-	public class ScarabBlinkTask : ActionTask {
+	public class ScarabBlinkAT : ActionTask {
 
 		public BBParameter<float> BlinkTimerBBP;
 		public BBParameter<float> baseLightIntensityBBP;
