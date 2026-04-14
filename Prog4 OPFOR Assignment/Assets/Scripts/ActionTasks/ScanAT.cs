@@ -55,6 +55,7 @@ namespace NodeCanvas.Tasks.Actions {
                 {
 
                     turningRight = true;
+					EndAction(true);
 
                 }
 
