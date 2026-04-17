@@ -31,7 +31,7 @@ namespace NodeCanvas.Tasks.Actions {
 		//Called once per frame while the action is active.
 		protected override void OnUpdate() {
 
-            Debug.Log("Angle Relative to Waypoint" + Vector3.Angle(startAngle, agent.transform.forward));
+            //Debug.Log("Angle Relative to Waypoint" + Vector3.Angle(startAngle, agent.transform.forward));
 
             if (turningRight)
 			{
